@@ -1,0 +1,54 @@
+using Parameters
+
+struct Heston
+    s₀::Float64
+    ν₀::Float64
+    r::Float64
+    κ::Float64
+    θ::Float64
+    ξ::Float64
+    ρ::Float64
+
+    function Heston(s₀, ν₀, r, κ, θ, ξ, ρ)
+        2*κ*θ <= ξ^2 ? error("Feller condition not satisfied") : new(s₀, ν₀, r, κ, θ, ξ, ρ)
+    end
+end
+
+function step(ŝ, ν̂, Δ, model::Heston)::Tuple{Float64,Float64}
+    @unpack r, κ, θ, ξ, ρ = model
+
+    ΔW = √Δ*randn()
+    ΔZ = √(1-ρ^2)*√Δ*randn()
+
+    # Euler-Maruyama predictors
+    s̃ = ŝ*(1 + Δ*r + √ν̂*ΔW)
+    ν̃ = ν̂ + Δ*κ*(θ-ν̂) + ξ*√ν̂*ΔZ
+
+    # Drift-implicit correctors
+    ŝ += Δ/2*r*(s̃+ŝ) + ŝ*√ν̂*ΔW
+    ν̂ = max(ν̂ + Δ*κ*(θ-(ν̃+ν̂)/2) + ξ*√ν̂*ΔZ, 1e-14)
+
+    ŝ, ν̂
+end
+
+function path(T, nsteps, npaths, model::Heston)
+    @unpack s₀, ν₀ = model
+
+    Δ = T/nsteps
+
+    # preallocate arrays
+    ŝ = Array{Float64,2}(undef, nsteps+1, npaths)
+    ν̂ = Array{Float64,2}(undef, nsteps+1, npaths)
+
+    # initialize first row
+    ŝ[1,:] .= s₀
+    ν̂[1,:] .= ν₀
+
+    for j=1:npaths, i=1:nsteps
+        s_ij, ν_ij = step(ŝ[i,j], ν̂[i,j], Δ, model)
+        ŝ[i+1,j] = s_ij
+        ν̂[i+1,j] = ν_ij
+    end
+
+    ŝ, ν̂
+end
