@@ -14,41 +14,41 @@ struct Heston
     end
 end
 
-function step(ŝ, ν̂, Δ, model::Heston)::Tuple{Float64,Float64}
+function step(s, ν, Δ, model::Heston, rng::AbstractRNG)::Tuple{Float64,Float64}
     @unpack r, κ, θ, ξ, ρ = model
 
-    ΔW = √Δ*randn()
-    ΔZ = √(1-ρ^2)*√Δ*randn()
+    ΔW = √Δ*randn(rng)
+    ΔZ = √(1-ρ^2)*√Δ*randn(rng)
 
     # Euler-Maruyama predictors
-    s̃ = ŝ*(1 + Δ*r + √ν̂*ΔW)
-    ν̃ = ν̂ + Δ*κ*(θ-ν̂) + ξ*√ν̂*ΔZ
+    s̃ = s*(1 + Δ*r + √ν*ΔW)
+    ν̃ = ν + Δ*κ*(θ-ν) + ξ*√ν*ΔZ
 
     # Drift-implicit correctors
-    ŝ += Δ/2*r*(s̃+ŝ) + ŝ*√ν̂*ΔW
-    ν̂ = max(ν̂ + Δ*κ*(θ-(ν̃+ν̂)/2) + ξ*√ν̂*ΔZ, 1e-14)
+    s += Δ/2*r*(s̃+s) + s*√ν*ΔW
+    ν = max(ν + Δ*κ*(θ-(ν̃+ν)/2) + ξ*√ν*ΔZ, 1e-14)
 
-    ŝ, ν̂
+    s, ν
 end
 
-function path(T, nsteps, npaths, model::Heston)
+function path(T, nsteps, npaths, model::Heston, rng::AbstractRNG)
     @unpack s₀, ν₀ = model
 
     Δ = T/nsteps
 
     # preallocate arrays
-    ŝ = Array{Float64,2}(undef, nsteps+1, npaths)
-    ν̂ = Array{Float64,2}(undef, nsteps+1, npaths)
+    s = Array{Float64,2}(undef, nsteps+1, npaths)
+    ν = Array{Float64,2}(undef, nsteps+1, npaths)
 
     # initialize first row
-    ŝ[1,:] .= s₀
-    ν̂[1,:] .= ν₀
+    s[1,:] .= s₀
+    ν[1,:] .= ν₀
 
     for j=1:npaths, i=1:nsteps
-        s_ij, ν_ij = step(ŝ[i,j], ν̂[i,j], Δ, model)
-        ŝ[i+1,j] = s_ij
-        ν̂[i+1,j] = ν_ij
+        s_ij, ν_ij = step(s[i,j], ν[i,j], Δ, model, rng)
+        s[i+1,j] = s_ij
+        ν[i+1,j] = ν_ij
     end
 
-    ŝ, ν̂
+    s, ν
 end
