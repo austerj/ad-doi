@@ -1,7 +1,3 @@
-using Parameters
-using MuladdMacro
-using RandomNumbers: AbstractRNG
-
 struct Heston
     s₀::Float64
     ν₀::Float64
@@ -16,13 +12,13 @@ struct Heston
     end
 end
 
-mutable struct HestonState
+mutable struct HestonPath
     s::Float64
     ν::Float64
 end
 
-@muladd function step!(state::HestonState, Δ, model::Heston, rng::AbstractRNG)
-    @unpack s, ν = state
+@muladd function step!(path::HestonPath, Δ, model::Heston, rng::AbstractRNG)
+    @unpack s, ν = path
     @unpack r, κ, θ, ξ, ρ = model
 
     ΔW = √Δ*randn(rng)
@@ -36,7 +32,7 @@ end
     s += Δ/2*r*(s̃+s) + s*√ν*ΔW
     ν = max(ν + Δ*κ*(θ-(ν̃+ν)/2) + ξ*√ν*ΔZ, 1e-14)
 
-    state.s, state.ν = s, ν
+    path.s, path.ν = s, ν
 end
 
 function path(T, nsteps, npaths, model::Heston, rng::AbstractRNG)
@@ -53,11 +49,11 @@ function path(T, nsteps, npaths, model::Heston, rng::AbstractRNG)
     ν[1,:] .= ν₀
 
     for j=1:npaths
-        state = HestonState(s₀, ν₀)
+        path = HestonPath(s₀, ν₀)
         for i=1:nsteps
-            step!(state, Δ, model, rng)
-            s[i+1,j] = state.s
-            ν[i+1,j] = state.ν
+            step!(path, Δ, model, rng)
+            s[i+1,j] = path.s
+            ν[i+1,j] = path.ν
         end
     end
 
