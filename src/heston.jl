@@ -13,6 +13,7 @@ struct Heston
 end
 
 mutable struct HestonPath
+    t::Float64
     s::Float64
     ν::Float64
 end
@@ -32,6 +33,7 @@ end
     s += Δ/2*r*(s̃+s) + s*√ν*ΔW
     ν = max(ν + Δ*κ*(θ-(ν̃+ν)/2) + ξ*√ν*ΔZ, 1e-14)
 
+    path.t += Δ
     path.s, path.ν = s, ν
 end
 
@@ -49,7 +51,7 @@ function path(T, nsteps, npaths, model::Heston, rng::AbstractRNG)
     ν[1,:] .= ν₀
 
     for j=1:npaths
-        path = HestonPath(s₀, ν₀)
+        path = HestonPath(0, s₀, ν₀)
         for i=1:nsteps
             step!(path, Δ, model, rng)
             s[i+1,j] = path.s
