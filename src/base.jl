@@ -13,5 +13,6 @@ using Distributions: cdf, Normal
 Φ(x) = cdf(Normal(), x)
 
 include("blackscholes/blackscholes.jl")
-include("blackscholes/europut.jl")
+include("blackscholes/put.jl")
+include("blackscholes/call.jl")
 include("heston.jl")
