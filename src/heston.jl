@@ -12,7 +12,7 @@ struct Heston
     end
 end
 
-mutable struct HestonPath
+mutable struct HestonPath <: AbstractPath
     t::Float64
     s::Float64
     ν::Float64
