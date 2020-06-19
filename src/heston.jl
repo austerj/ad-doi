@@ -1,4 +1,10 @@
-struct Heston
+mutable struct HestonPath <: AbstractPath
+    t::Float64
+    s::Float64
+    ν::Float64
+end
+
+struct Heston <: AbstractModel
     s₀::Float64
     ν₀::Float64
     r::Float64
@@ -6,19 +12,20 @@ struct Heston
     θ::Float64
     ξ::Float64
     ρ::Float64
+    path::HestonPath
 
     function Heston(s₀, ν₀, r, κ, θ, ξ, ρ)
-        2*κ*θ <= ξ^2 ? error("Feller condition not satisfied") : new(s₀, ν₀, r, κ, θ, ξ, ρ)
+        2*κ*θ <= ξ^2 ? error("Feller condition not satisfied") : new(s₀, ν₀, r, κ, θ, ξ, ρ, HestonPath(0,s₀,ν₀))
     end
 end
 
-mutable struct HestonPath <: AbstractPath
-    t::Float64
-    s::Float64
-    ν::Float64
+function initialize(model::Heston)
+    model.path.t = 0
+    model.path.s = model.s₀
+    model.path.ν = model.ν₀
 end
 
-@muladd function step!(path::HestonPath, Δ, model::Heston, rng::AbstractRNG)
+@muladd function step!(path::HestonPath, model::Heston, Δ, rng::AbstractRNG)
     @unpack s, ν = path
     @unpack r, κ, θ, ξ, ρ = model
 
@@ -37,6 +44,10 @@ end
     path.s, path.ν = s, ν
 end
 
+function step!(Δ, model::Heston, rng::AbstractRNG)
+    step!(model.path, Δ, model, rng)
+end
+
 function path(T, nsteps, npaths, model::Heston, rng::AbstractRNG)
     @unpack s₀, ν₀ = model
 
@@ -53,7 +64,7 @@ function path(T, nsteps, npaths, model::Heston, rng::AbstractRNG)
     for j=1:npaths
         path = HestonPath(0, s₀, ν₀)
         for i=1:nsteps
-            step!(path, Δ, model, rng)
+            step!(path, model, Δ, rng)
             s[i+1,j] = path.s
             ν[i+1,j] = path.ν
         end

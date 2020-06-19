@@ -4,6 +4,7 @@ using Parameters
 using MuladdMacro
 
 using RandomNumbers: AbstractRNG
+abstract type AbstractModel end
 abstract type AbstractPath end
 abstract type AbstractContract end
 abstract type AbstractState end
