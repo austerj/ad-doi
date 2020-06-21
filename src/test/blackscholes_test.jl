@@ -5,7 +5,7 @@ const BLACKSCHOLES_POW_CALL = undef
 const BLACKSCHOLES_BIN_CASH_CALL = undef
 
 # state
-state = BlackScholesState(s₀, σ, r)
+state = BlackScholesState(0, s₀, σ, r)
 
 @test u(state, EuropeanPut(T,K)) ≈ BLACKSCHOLES_PUT atol=atol
 @test u(state, EuropeanCall(T,K)) ≈ BLACKSCHOLES_CALL atol=atol

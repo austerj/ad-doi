@@ -57,9 +57,14 @@ end
 @muladd function u(t, s, ν, model::Heston, contract::AbstractContract)
     @unpack r, κ, θ, ξ, ρ = model
     @unpack T = contract
+    τ = T-t
 
-    σ̄ = √(θ*(T-t) + (ν-θ)/κ*(1-exp(-κ*(T-t)))) / (T-t)
-    state = BlackScholesState(s, σ̄, r)
-
-    u(state, contract)
+    if τ > 0
+        σ̄ = √(θ*τ + (ν-θ)/κ*(1-exp(-κ*τ))) / τ
+        state = BlackScholesState(t, s, σ̄, r)
+        u(state, contract)
+    else
+        state = BlackScholesState(T, s, 0, r)
+        h(state, contract)
+    end
 end

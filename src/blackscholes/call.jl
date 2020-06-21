@@ -3,14 +3,15 @@ struct EuropeanCall <: AbstractContract
     K::Float64
 end
 
-function u(state::BlackScholesState, contract::EuropeanCall)
-    @unpack s, σ, r = state
+@muladd function u(state::BlackScholesState, contract::EuropeanCall)
+    @unpack t, s, σ, r = state
     @unpack T, K = contract
+    τ = T-t
 
-    d1 = (log(s/K) + (r+0.5*σ^2)*T) / (√T*σ);
-    d2 = d1 - σ*√T
+    d1 = (log(s/K) + (r+0.5*σ^2)*τ) / (√τ*σ);
+    d2 = d1 - σ*√τ
 
-    u = exp(r*T)*s*Φ(d1) - K*Φ(d2)
+    u = exp(r*τ)*s*Φ(d1) - K*Φ(d2)
 end
 
 function h(state::BlackScholesState, contract::EuropeanCall)
