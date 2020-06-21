@@ -3,9 +3,9 @@ using Test
 include("../base.jl")
 
 # contract properties
-const global T = 1
-const global K = 90
-const global n = 2
+const T = 1
+const K = 90
+const n = 2
 
 # heston properties
 const s₀ = 100
@@ -20,10 +20,14 @@ const ρ = -0.15
 const σ = 0.2
 const r = 0.04
 
-# tolerance for numerical comparisons
-const global atol = 1e-6
+# terminal state
+const sT = 95
 
-@testset "Price Tests" begin
+# tolerance for numerical comparisons
+const atol = 1e-6
+
+@testset "Tests" begin
     @testset "Black-Scholes" begin include("blackscholes_test.jl") end
     @testset "Generalized Black-Scholes" begin include("generalizedblackscholes_test.jl") end
+    @testset "Payoffs" begin include("payoff_test.jl") end
 end

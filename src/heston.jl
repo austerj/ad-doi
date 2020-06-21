@@ -64,7 +64,6 @@ end
         state = BlackScholesState(t, s, σ̄, r)
         u(state, contract)
     else
-        state = BlackScholesState(T, s, 0, r)
-        h(state, contract)
+        h(s, contract)  # u automatically computes payoff at T, h redundant?
     end
 end

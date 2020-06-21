@@ -9,5 +9,5 @@ heston = Heston(s₀, ν₀, r, κ, θ, ξ, ρ)
 
 @test u(0, s₀, ν₀, heston, EuropeanPut(T,K)) ≈ GENERALIZEDBLACKSCHOLES_PUT atol=atol
 @test u(0, s₀, ν₀, heston, EuropeanCall(T,K)) ≈ GENERALIZEDBLACKSCHOLES_CALL atol=atol
-# @test u(path, PowerCall(r,T,K,n)) ≈ GENERALIZEDBLACKSCHOLES_POW atol=atol
-# @test u(path, Binary(r,T)) ≈ GENERALIZEDBLACKSCHOLES_BIN atol=atol
+# @test u(0, s₀, ν₀, heston, PowerCall(T,K,n)) ≈ GENERALIZEDBLACKSCHOLES_POW atol=atol
+# @test u(0, s₀, ν₀, heston, Binary(T,K)) ≈ GENERALIZEDBLACKSCHOLES_BIN atol=atol
