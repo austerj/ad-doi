@@ -30,4 +30,5 @@ const atol = 1e-6
     @testset "Black-Scholes" begin include("blackscholes_test.jl") end
     @testset "Generalized Black-Scholes" begin include("generalizedblackscholes_test.jl") end
     @testset "Payoffs" begin include("payoff_test.jl") end
+    @testset "Greeks" begin include("greeks_test.jl") end
 end

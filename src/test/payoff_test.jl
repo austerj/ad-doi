@@ -4,10 +4,9 @@ const PAYOFF_CALL = max(sT-K, 0)
 const PAYOFF_POW_CALL = max(sT^n-K, 0)
 const PAYOFF_BIN_CASH_CALL = sT > K
 
-# state
+# black-scholes; payoff at terminal time from value function from  Φ(±Inf)∈{0,1}
 state = BlackScholesState(T, sT, σ, r)
 
-# black-scholes; convergence to payoff at terminal time
 @test u(state, EuropeanPut(T,K)) ≈ PAYOFF_PUT atol=atol
 @test u(state, EuropeanCall(T,K)) ≈ PAYOFF_CALL atol=atol
 # @test u(state, PowerCall(T,K,n)) ≈ PAYOFF_POWCALL atol=atol
