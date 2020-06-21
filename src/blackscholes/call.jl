@@ -1,6 +1,6 @@
 struct EuropeanCall <: AbstractContract
-    T::Float64
-    K::Float64
+    T::Real
+    K::Real
 end
 
 @muladd function u(state::BlackScholesState, contract::EuropeanCall)
