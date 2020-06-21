@@ -53,3 +53,13 @@ function path(T, nsteps, npaths, model::Heston, rng::AbstractRNG)
 
     s, ν
 end
+
+@muladd function u(t, s, ν, model::Heston, contract::AbstractContract)
+    @unpack r, κ, θ, ξ, ρ = model
+    @unpack T = contract
+
+    σ̄ = √(θ*(T-t) + (ν-θ)/κ*(1-exp(-κ*(T-t)))) / (T-t)
+    state = BlackScholesState(s, σ̄, r)
+
+    u(state, contract)
+end
