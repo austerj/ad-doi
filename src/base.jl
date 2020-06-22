@@ -15,5 +15,7 @@ using Distributions: cdf, Normal
 include("blackscholes/blackscholes.jl")
 include("blackscholes/put.jl")
 include("blackscholes/call.jl")
+
 include("heston.jl")
 include("diffop.jl")
+include("estimator.jl")
