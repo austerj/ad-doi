@@ -3,28 +3,28 @@ using Test
 include("../base.jl")
 
 # contract properties
-const T = 1
-const K = 90
-const n = 2
+T = 1
+K = 90
+n = 2
 
 # heston properties
-const s₀ = 100
-const ν₀ = 0.16
-const r = 0.04
-const κ = 0.6
-const θ = 0.04
-const ξ = 0.2
-const ρ = -0.15
+s₀ = 100
+ν₀ = 0.16
+r = 0.04
+κ = 0.6
+θ = 0.04
+ξ = 0.2
+ρ = -0.15
 
 # black-scholes properties
-const σ = 0.2
-const r = 0.04
+σ = 0.2
+r = 0.04
 
 # terminal state
-const sT = 95
+sT = 95
 
 # tolerance for numerical comparisons
-const atol = 1e-6
+atol = 1e-6
 
 @testset "Tests" begin
     @testset "Black-Scholes" begin include("blackscholes_test.jl") end

@@ -42,9 +42,9 @@ function path(T, nsteps, npaths, model::Heston, rng::AbstractRNG)
     s[1,:] .= s₀
     ν[1,:] .= ν₀
 
-    for j=1:npaths
+    for j = 1:npaths
         s_j, ν_j = s₀, ν₀
-        for i=1:nsteps
+        for i = 1:nsteps
             s_j, ν_j = step(s_j, ν_j, Δ, model, rng)
             s[i+1,j] = s_j
             ν[i+1,j] = ν_j
@@ -60,7 +60,9 @@ end
     τ = T-t
 
     if τ > 0
-        σ̄ = √(θ*τ + (ν-θ)/κ*(1-exp(-κ*τ))) / τ
+        # analytical solution to √(1/τ*∫ν̄ₜdt) from 0 to τ
+        σ̄ = √((θ + (ν-θ)/κ*(1-exp(-κ*τ))/τ))
+
         state = BlackScholesState(t, s, σ̄, r)
         u(state, contract)
     else
