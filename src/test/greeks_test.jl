@@ -12,18 +12,27 @@ const GENERALIZEDBLACKSCHOLES_VOMMA_PUT = -91.6947601203105
 Ds = Dual(Dual(s₀,1,0), Dual(0,0,0))
 Dσ = Dual(Dual(σ,0,1), Dual(1,0,0))
 state = BlackScholesState(0, Ds, Dσ, r)
-bsgreeks = u(state, EuropeanPut(T,K))
+greeks = u(state, EuropeanPut(T,K))
 
-@test bsgreeks.value.partials[1] ≈ BLACKSCHOLES_DELTA_PUT atol=atol
-@test bsgreeks.value.partials[2] ≈ BLACKSCHOLES_VEGA_PUT atol=atol
-@test bsgreeks.partials[1].partials[1] ≈ BLACKSCHOLES_VANNA_PUT atol=atol
-@test bsgreeks.partials[1].partials[2] ≈ BLACKSCHOLES_VOMMA_PUT atol=atol
+@test greeks.value.partials[1] ≈ BLACKSCHOLES_DELTA_PUT atol=atol
+@test greeks.value.partials[2] ≈ BLACKSCHOLES_VEGA_PUT atol=atol
+@test greeks.partials[1].partials[1] ≈ BLACKSCHOLES_VANNA_PUT atol=atol
+@test greeks.partials[1].partials[2] ≈ BLACKSCHOLES_VOMMA_PUT atol=atol
 
 # generalized black-scholes
 Dν = Dual(Dual(ν₀,0,1), Dual(1,0,0))
-gbsgreeks = u(0, Ds, Dν, heston, EuropeanPut(T,K))
+greeks = u(0, Ds, Dν, heston, EuropeanPut(T,K))
 
-@test gbsgreeks.value.partials[1] ≈ GENERALIZEDBLACKSCHOLES_DELTA_PUT atol=atol
-@test gbsgreeks.value.partials[2] ≈ GENERALIZEDBLACKSCHOLES_VEGA_PUT atol=atol
-@test gbsgreeks.partials[1].partials[1] ≈ GENERALIZEDBLACKSCHOLES_VANNA_PUT atol=atol
-@test gbsgreeks.partials[1].partials[2] ≈ GENERALIZEDBLACKSCHOLES_VOMMA_PUT atol=atol
+@test greeks.value.partials[1] ≈ GENERALIZEDBLACKSCHOLES_DELTA_PUT atol=atol
+@test greeks.value.partials[2] ≈ GENERALIZEDBLACKSCHOLES_VEGA_PUT atol=atol
+@test greeks.partials[1].partials[1] ≈ GENERALIZEDBLACKSCHOLES_VANNA_PUT atol=atol
+@test greeks.partials[1].partials[2] ≈ GENERALIZEDBLACKSCHOLES_VOMMA_PUT atol=atol
+
+# no impact at maturity
+Dν = Dual(Dual(ν₀,0,1), Dual(1,0,0))
+greeks = u(T, Ds, Dν, heston, EuropeanPut(T,K))
+
+@test greeks.value.partials[1] ≈ 0 atol=atol
+@test greeks.value.partials[2] ≈ 0 atol=atol
+@test greeks.partials[1].partials[1] ≈ 0 atol=atol
+@test greeks.partials[1].partials[2] ≈ 0 atol=atol
