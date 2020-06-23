@@ -1,6 +1,6 @@
 # comparison to ensure correct implementation of value functions
-const BLACKSCHOLES_PUT = 2.63478909638165
-const BLACKSCHOLES_CALL = 16.7158665156205
+const BLACKSCHOLES_PUT = 6.24902542413863
+const BLACKSCHOLES_CALL = 10.3301028433775
 const BLACKSCHOLES_POW_CALL = undef
 const BLACKSCHOLES_BIN_CASH_CALL = undef
 
