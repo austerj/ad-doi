@@ -22,7 +22,7 @@ heston = Heston(s₀, ν₀, r, κ, θ, ξ, ρ)
 r = 0.04
 
 # terminal state
-sT = 95
+sT = 110
 
 # estimator
 rng = Xorshift128Plus(1)
