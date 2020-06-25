@@ -1,10 +1,9 @@
 struct EuropeanCall <: AbstractContract
-    T::Real
-    K::Real
+    T::Float64
+    K::Float64
 end
 
-@muladd function u(state::BlackScholesState, contract::EuropeanCall)
-    @unpack t, s, σ, r = state
+@muladd function u(t, s, σ, r, model::BlackScholes, contract::EuropeanCall)
     @unpack T, K = contract
     τ = T-t
 

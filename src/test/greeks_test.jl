@@ -11,8 +11,7 @@ const GENERALIZEDBLACKSCHOLES_VOMMA_PUT = -122.130268204048
 # black-scholes greeks
 Ds = Dual(Dual(s₀,1,0), Dual(0,0,0))
 Dσ = Dual(Dual(σ,0,1), Dual(1,0,0))
-state = BlackScholesState(0, Ds, Dσ, r)
-bsgreeks = u(state, EuropeanPut(T,K))
+bsgreeks = u(0., Ds, Dσ, r, BlackScholes(), EuropeanPut(T,K))
 
 @test bsgreeks.value.partials[1] ≈ BLACKSCHOLES_DELTA_PUT atol=atol
 @test bsgreeks.value.partials[2] ≈ BLACKSCHOLES_VEGA_PUT atol=atol
@@ -21,7 +20,7 @@ bsgreeks = u(state, EuropeanPut(T,K))
 
 # generalized black-scholes
 Dν = Dual(Dual(ν₀,0,1), Dual(1,0,0))
-gbsgreeks = u(0, Ds, Dν, heston, EuropeanPut(T,K))
+gbsgreeks = u(0., Ds, Dν, heston, EuropeanPut(T,K))
 
 @test gbsgreeks.value.partials[1] ≈ GENERALIZEDBLACKSCHOLES_DELTA_PUT atol=atol
 @test gbsgreeks.value.partials[2] ≈ GENERALIZEDBLACKSCHOLES_VEGA_PUT atol=atol

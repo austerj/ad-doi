@@ -7,11 +7,11 @@ function estimator(nsteps, npaths, model::Heston, contract::AbstractContract, rn
     A₀ = diffop(0, s₀, ν₀, model, contract)/2
 
     # estimators
-    mc = 0
+    mc = 0.
     doi = u₀
 
     for j = 1:npaths
-        t, s, ν = 0, s₀, ν₀
+        t, s, ν = 0., s₀, ν₀
         A = A₀
         for i = 1:nsteps
             t += Δ

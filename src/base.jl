@@ -12,7 +12,7 @@ abstract type AbstractState end
 using Distributions: cdf, Normal
 Φ(x) = cdf(Normal(), x)
 
-include("blackscholes/blackscholes.jl")
+struct BlackScholes <: AbstractModel end
 include("blackscholes/put.jl")
 include("blackscholes/call.jl")
 

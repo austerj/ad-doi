@@ -62,9 +62,7 @@ end
     if τ > 0
         # analytical solution to √(1/τ*∫ν̄ₜdt) from 0 to τ
         σ̄ = √((θ + (ν-θ)/κ*(1-exp(-κ*τ))/τ))
-
-        state = BlackScholesState(t, s, σ̄, r)
-        u(state, contract)
+        u(t, s, σ̄, r, BlackScholes(), contract)
     else
         h(s, contract)  # u automatically computes payoff at T, h redundant?
     end
