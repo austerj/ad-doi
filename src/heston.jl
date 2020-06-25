@@ -34,11 +34,9 @@ function path(T, nsteps, npaths, model::Heston, rng::AbstractRNG)
 
     Δ = T/nsteps
 
-    # preallocate arrays
     s = Array{Float64,2}(undef, nsteps+1, npaths)
     ν = Array{Float64,2}(undef, nsteps+1, npaths)
 
-    # initialize first row
     s[1,:] .= s₀
     ν[1,:] .= ν₀
 
@@ -64,6 +62,6 @@ end
         σ̄ = √((θ + (ν-θ)/κ*(1-exp(-κ*τ))/τ))
         u(t, s, σ̄, r, BlackScholes(), contract)
     else
-        h(s, contract)  # u automatically computes payoff at T, h redundant?
+        h(s, contract)
     end
 end
