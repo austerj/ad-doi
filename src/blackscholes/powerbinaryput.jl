@@ -8,9 +8,9 @@ end
     @unpack T, K, n = contract
     τ = T-t
 
-    d1 = (log(s/K) + (r+(n-0.5)*σ^2)*τ) / (√τ*σ)
+    d = (log(s/K) + (r+(n-0.5)*σ^2)*τ) / (√τ*σ)
 
-    u = exp((r+(n-1)*0.5*σ^2)*τ*n)*s^n*Φ(-d1)
+    u = exp((r+(n-1)*0.5*σ^2)*τ*n)*s^n*Φ(-d)
 end
 
 function h(s, contract::PowerBinaryPut)

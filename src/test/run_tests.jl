@@ -3,12 +3,12 @@ using Test
 include("../base.jl")
 
 # contracts
-T = 1
-K = 100
-n = 2
+T = 1.
+K = 100.
+n = 2.
 
 # heston
-s₀ = 100
+s₀ = 100.
 ν₀ = 0.16
 r = 0.04
 κ = 0.6
@@ -22,7 +22,7 @@ heston = Heston(s₀, ν₀, r, κ, θ, ξ, ρ)
 r = 0.04
 
 # terminal state
-sT = 110
+sT = 110.
 
 # estimator
 rng = Xorshift128Plus(1)

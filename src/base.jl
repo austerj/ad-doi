@@ -1,5 +1,4 @@
 using RandomNumbers.Xorshifts
-using BenchmarkTools
 using Parameters
 using MuladdMacro
 using ForwardDiff: Dual
