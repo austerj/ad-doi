@@ -7,8 +7,9 @@ using RandomNumbers: AbstractRNG
 abstract type AbstractModel end
 abstract type AbstractContract end
 
-using Distributions: cdf, Normal
+using Distributions: cdf, pdf, Normal
 Φ(x) = cdf(Normal(), x)
+φ(x) = pdf(Normal(), x)
 
 struct BlackScholes <: AbstractModel end
 include("blackscholes/put.jl")
