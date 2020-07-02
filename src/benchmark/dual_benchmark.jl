@@ -70,7 +70,7 @@ analyticalbenchmark = @benchmark analyticalsensitivities($s₀, $ν₀, $heston,
 dt = dualbenchmark.times
 at = analyticalbenchmark.times
 
-theme(:vibrant, size=(800,400))
+theme(:vibrant, size=(800,400), palette=[ColorSchemes.ice[i] for i in 64:128:192])
 nbins = 100
 thresh = 1
 alpha = 0.8
