@@ -14,6 +14,7 @@ using Distributions: cdf, pdf, Normal
 struct BlackScholes <: AbstractModel end
 include("blackscholes/put.jl")
 include("blackscholes/call.jl")
+include("blackscholes/strangle.jl")
 include("blackscholes/powercall.jl")
 include("blackscholes/powerbinaryput.jl")
 

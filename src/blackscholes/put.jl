@@ -10,10 +10,10 @@ end
     d1 = (log(s/K) + (r+0.5*σ^2)*τ) / (√τ*σ)
     d2 = d1 - σ*√τ
 
-    u = K*Φ(-d2) - exp(r*τ)*s*Φ(-d1)
+    K*Φ(-d2) - exp(r*τ)*s*Φ(-d1)
 end
 
 function h(s, contract::EuropeanPut)
     @unpack K = contract
-    h = max(K-s, 0)
+    max(K-s, 0)
 end
