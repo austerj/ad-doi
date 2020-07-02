@@ -1,25 +1,19 @@
 include("../base.jl")
+include("../params.jl")
 
 using Plots
 using Distributions: std
+
+pyplot()
 
 # contract
 T = 1.
 K = 100.
 contract = EuropeanCall(T,K);
 
-# heston
-s = 100
-ν = 0.16
-r = 0.04
-κ = 0.6
-θ = 0.04
-ξ = 0.2
-ρ = -0.15
-heston = Heston(s, ν, r, κ, θ, ξ, ρ)
-
 @noinline function dualsensitivities(s, ν, model::Heston, contract::AbstractContract)
     # add small pertubations to prevent caching
+    s += randn()*1e-5
     ν += randn()*1e-5
 
     zs = Dual(Dual(s,1.,0.), Dual(0.,0.,0.))
@@ -41,6 +35,7 @@ end
     @unpack r, κ, θ = model
     @unpack T, K = contract
     # add small pertubations to prevent caching
+    s += randn()*1e-5
     ν += randn()*1e-5
 
     # σ̄ and derivatives wrt ν
@@ -69,13 +64,13 @@ nsamples = 10000
 nevals = 1000
 nseconds = 120
 
-dualbenchmark = @benchmark dualsensitivities($s, $ν, $heston, $contract) samples=nsamples seconds=nseconds evals=nevals
-analyticalbenchmark = @benchmark analyticalsensitivities($s, $ν, $heston, $contract) samples=nsamples seconds=nseconds evals=nevals
+dualbenchmark = @benchmark dualsensitivities($s₀, $ν₀, $heston, $contract) samples=nsamples seconds=nseconds evals=nevals
+analyticalbenchmark = @benchmark analyticalsensitivities($s₀, $ν₀, $heston, $contract) samples=nsamples seconds=nseconds evals=nevals
 
 dt = dualbenchmark.times
 at = analyticalbenchmark.times
 
-theme(:vibrant)
+theme(:vibrant, size=(800,400))
 nbins = 100
 thresh = 1
 alpha = 0.8
@@ -84,7 +79,9 @@ range_start = max(min(mean(dt), mean(at)) - thresh*max(std(dt), std(at)), 0)
 range_stop = max(mean(dt), mean(at)) + thresh*max(std(dt), std(at))
 timerange = range(range_start, stop=range_stop, length=nbins)
 
-histogram(dt, bins=timerange, normalize=:probability, label="dual", fillalpha=alpha, size=(800,400))
+histogram(dt, bins=timerange, normalize=:probability, label="dual", fillalpha=alpha)
 histogram!(at, bins=timerange, normalize=:probability, fillalpha=alpha, label="analytical")
 xlabel!("nanoseconds")
 ylabel!("ratio")
+
+savefig("DualBenchmark.pdf")
