@@ -29,9 +29,9 @@ end
 function diffopplot(t, x, y, contract::AbstractContract)
     f(x,y) = diffop(t, x, y, heston, contract)
     surface(x, y, f)
-    xlabel!(L"s_t")
+    xlabel!(L"S_t")
     ylabel!(L"\nu_t")
-    savefig("DiffusionOperator"*string(typeof(contract))*".pdf")
+    # savefig("DiffusionOperator"*string(typeof(contract))*".pdf")
 end
 
 nsteps = 51

@@ -43,9 +43,9 @@ function path(T, nsteps, npaths, model::Heston, rng::AbstractRNG)
     for j = 1:npaths
         s_j, ν_j = s₀, ν₀
         for i = 1:nsteps
-            s_j, ν_j = step(s_j, ν_j, Δ, model, rng)
-            s[i+1,j] = s_j
-            ν[i+1,j] = ν_j
+            s_i, ν_i = step(s_i, ν_i, Δ, model, rng)
+            s[i+1,j] = s_i
+            ν[i+1,j] = ν_i
         end
     end
 
