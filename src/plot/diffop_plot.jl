@@ -15,7 +15,6 @@ K₂ = 110
 n = 2
     
 function remove_grid!()
-    # remove grid
     ax = Plots.PyPlot.gca()
     ax.xaxis.pane.fill = false
     ax.yaxis.pane.fill = false
@@ -26,7 +25,7 @@ function remove_grid!()
     ax.grid(false)
 end
 
-function diffopplot(t, x, y, contract::AbstractContract)
+function diffop_plot(t, x, y, contract::AbstractContract)
     f(x,y) = diffop(t, x, y, heston, contract)
     surface(x, y, f)
     xlabel!(L"S_t")
@@ -47,7 +46,7 @@ theme(
     color=:ice,
 )
 
-d1 = diffopplot(t, x, y, EuropeanPut(T,K))
-d2 = diffopplot(t, x, y, Strangle(T,K₁,K₂))
-d3 = diffopplot(t, x, y, PowerBinaryPut(T,K,n))
-d4 = diffopplot(t, x_pow, y, PowerCall(T,K,n))
+d1 = diffop_plot(t, x, y, EuropeanPut(T,K))
+d2 = diffop_plot(t, x, y, Strangle(T,K₁,K₂))
+d3 = diffop_plot(t, x, y, PowerBinaryPut(T,K,n))
+d4 = diffop_plot(t, x_pow, y, PowerCall(T,K,n))

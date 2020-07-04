@@ -1,6 +1,7 @@
 [deps]
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
+HypothesisTests = "09f84164-cd44-5f33-b23f-e6b0d136a0d5"
 MuladdMacro = "46d2c3a1-f734-5fdb-9937-b9b9aeba4221"
 Parameters = "d96e819e-fc66-5662-9728-84c9c7592b0a"
 RandomNumbers = "e6cf234a-135c-5ec9-84dd-332b85af5143"

@@ -2,7 +2,6 @@ include("../base.jl")
 include("../params.jl")
 
 using Plots
-using Distributions: std
 
 pyplot()
 

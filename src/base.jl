@@ -7,7 +7,7 @@ using RandomNumbers: AbstractRNG
 abstract type AbstractModel end
 abstract type AbstractContract end
 
-using Distributions: cdf, pdf, Normal
+using Distributions: cdf, pdf, Normal, std
 Φ(x) = cdf(Normal(), x)
 φ(x) = pdf(Normal(), x)
 
