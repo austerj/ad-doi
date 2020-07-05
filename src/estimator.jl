@@ -31,7 +31,7 @@ function estimator(nsteps, npaths, model::Heston, contract::AbstractContract, rn
     mc_estimate, doi_estimate
 end
 
-# set threads with "export JULIA_NUM_THREADS=number_of_threads" outside REPL
+# set threads with "export JULIA_NUM_THREADS=$(nproc)" outside REPL
 function parallel_estimator(nsteps, npaths, model::Heston, contract::AbstractContract)
     @unpack s₀, ν₀, r = model
     @unpack T = contract
