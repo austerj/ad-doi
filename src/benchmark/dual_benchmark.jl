@@ -76,21 +76,21 @@ theme(
     size=(800, 300),
     palette=[ColorSchemes.ice[i] for i in 64:128:192],
     xgrid=false,
-    legend=false
+    xminorticks=2
 )
 
 nbins = 100
-thresh = 1
+thresh = 0.5
 alpha = 0.8
 
 range_start = max(min(mean(dt), mean(at)) - thresh*max(std(dt), std(at)), 0)
 range_stop = max(mean(dt), mean(at)) + thresh*max(std(dt), std(at))
 timerange = range(range_start, stop=range_stop, length=nbins)
 
-histogram(dt, bins=timerange, normalize=:probability, fillalpha=alpha, label="dual")
-histogram!(at, bins=timerange, normalize=:probability, fillalpha=alpha, label="analytical")
+histogram(at, bins=timerange, normalize=:probability, fillalpha=alpha, label="analytical")
+histogram!(dt, bins=timerange, normalize=:probability, fillalpha=alpha, label="dual")
 xlabel!("nanoseconds")
-ylabel!("ratio")
+ylabel!("relative frequency")
 yaxis!(bordercolor="white")
 
 savefig("DualBenchmark.pdf")
