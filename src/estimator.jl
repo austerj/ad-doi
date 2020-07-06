@@ -3,6 +3,7 @@ function estimator(nsteps, npaths, model::Heston, contract::AbstractContract, rn
     @unpack T = contract
 
     Δ = T/nsteps
+    t = Δ:Δ:T
     u₀ = u(0., s₀, ν₀, model, contract)
     A₀ = diffop(0., s₀, ν₀, model, contract)/2
 
@@ -10,12 +11,11 @@ function estimator(nsteps, npaths, model::Heston, contract::AbstractContract, rn
     doi = Vector{Float64}(undef, npaths)
 
     for j = 1:npaths
-        t, s, ν = 0., s₀, ν₀
+        s, ν = s₀, ν₀
         A = A₀
         for i = 1:nsteps
-            t += Δ
             s, ν = step(s, ν, Δ, model, rng)
-            A += diffop(t, s, ν, model, contract)
+            A += diffop(t[i], s, ν, model, contract)
         end
         # trapezoidal rule; diffop is zero at time T hence division not needed
         A *= Δ
@@ -37,6 +37,7 @@ function parallel_estimator(nsteps, npaths, model::Heston, contract::AbstractCon
     @unpack T = contract
 
     Δ = T/nsteps
+    t = Δ:Δ:T
     u₀ = u(0., s₀, ν₀, model, contract)
     A₀ = Δ*diffop(0., s₀, ν₀, model, contract)/2
 
@@ -50,7 +51,7 @@ function parallel_estimator(nsteps, npaths, model::Heston, contract::AbstractCon
 
     Threads.@threads for i in 1:Threads.nthreads()
         while true
-            payoff, A = sample(Δ, nsteps, model, contract, rngs[Threads.threadid()])
+            payoff, A = sample(t, Δ, nsteps, model, contract, rngs[Threads.threadid()])
             npath_thread = Threads.atomic_add!(npath_atomic, 1)
 
             if npath_thread < npaths
@@ -69,16 +70,14 @@ function parallel_estimator(nsteps, npaths, model::Heston, contract::AbstractCon
     mc_estimate, doi_estimate
 end
 
-function sample(Δ, nsteps, model::Heston, contract::AbstractContract, rng::AbstractRNG)
+function sample(t, Δ, nsteps, model::Heston, contract::AbstractContract, rng::AbstractRNG)
     @unpack s₀, ν₀, r, κ, θ, ξ, ρ = model
-    @unpack T = contract
 
-    t, s, ν = 0., s₀, ν₀
+    s, ν = s₀, ν₀
     A = 0
     @inbounds for i = 1:nsteps
-        t += Δ
         s, ν = step(s, ν, Δ, model, rng)
-        A += diffop(t, s, ν, model, contract)
+        A += diffop(t[i], s, ν, model, contract)
     end
     # trapezoidal rule; diffop is zero at time T hence division not needed
     A *= Δ
