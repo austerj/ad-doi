@@ -60,7 +60,7 @@ theme(
     xminorticks=2
 )
 
-nbins = 200
+nbins = 120
 thresh = 3.5
 alpha = 0.8
 

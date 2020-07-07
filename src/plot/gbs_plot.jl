@@ -8,7 +8,7 @@ using LaTeXStrings
 pyplot()
 
 rng = Xoroshiro128Plus(1)
-nsteps = 200
+nsteps = 400
 npaths = 1
 
 T = 5.
@@ -38,8 +38,6 @@ for j = 1:npaths
     plot!(t[stop:end], ν[stop:end, j], color=colors[2], label="", alpha=0.5)
     plot!(t[stop:end], σ̄, linestyle=:dash, color=colors[1], label=L"\bar\nu", alpha=alpha)
 end
-# xlabel!(L"t")
-# plot!(xgrid=false, ygrid=false, legend=false)
-display(p)
+plot!(xticks=false)
 
 savefig("VarianceProcessApproximation.pdf")
