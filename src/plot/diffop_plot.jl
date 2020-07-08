@@ -36,7 +36,6 @@ end
 nsteps = 51
 
 x = range(80, stop=120, length=nsteps)
-x_pow = range(8, stop=12, length=nsteps)
 y = range(0.001, stop=0.025, length=nsteps)
 
 theme(
@@ -49,4 +48,4 @@ theme(
 d1 = diffop_plot(t, x, y, EuropeanPut(T,K))
 d2 = diffop_plot(t, x, y, Strangle(T,K₁,K₂))
 d3 = diffop_plot(t, x, y, PowerBinaryPut(T,K,n))
-d4 = diffop_plot(t, x_pow, y, PowerCall(T,K,n))
+d4 = diffop_plot(t, x, y, PowerCall(T,K^n,n))
