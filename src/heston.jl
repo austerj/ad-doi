@@ -1,4 +1,4 @@
-struct Heston <: AbstractModel
+@with_kw struct Heston <: AbstractModel
     s₀::Float64
     ν₀::Float64
     r::Float64
@@ -16,7 +16,7 @@ end
     @unpack r, κ, θ, ξ, ρ = model
 
     ΔW = √Δ*randn(rng)
-    ΔZ = √(1-ρ^2)*√Δ*randn(rng)
+    ΔZ = ρ*ΔW + √(1-ρ^2)*√Δ*randn(rng)
 
     # Euler-Maruyama predictors
     s̃ = s*(1 + Δ*r + √ν*ΔW)
