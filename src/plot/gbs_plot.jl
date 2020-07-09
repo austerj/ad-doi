@@ -26,7 +26,6 @@ theme(
 )
 colors = [ColorSchemes.ice[i] for i in 64:128:192]
 stops = [Int(ceil(nsteps/k)) for k in [7, 3, 2]]
-lwidth = 1
 alpha = 0.8
 
 p = plot()

@@ -1,45 +1,11 @@
 include("../base.jl")
 include("../params.jl")
+include("benchmarks.jl")
 
 using Plots
 using ColorSchemes
 
 pyplot()
-
-function npaths_benchmark(nsteps, npaths, heston, contract, nestimates)
-    mc_estimates = Vector{Float64}(undef, nestimates)
-    doi_estimates = Vector{Float64}(undef, nestimates)
-
-    for j = 1:nestimates
-        mc, doi = parallel_estimator(nsteps, npaths, heston, contract)
-        mc_estimates[j] = mc
-        doi_estimates[j] = doi
-    end
-
-    mc_estimates, doi_estimates
-end
-
-function mc_benchmark(nsteps, npaths_set, heston, contract, nestimates, heston_price)
-    mc_re_mean = Vector{Float64}(undef, length(npaths_set))
-    mc_re_std = Vector{Float64}(undef, length(npaths_set))
-    doi_re_mean = Vector{Float64}(undef, length(npaths_set))
-    doi_re_std = Vector{Float64}(undef, length(npaths_set))
-
-    for (j, npaths) in enumerate(npaths_set)
-        npaths = npaths_set[j]
-        mc_estimates, doi_estimates = npaths_benchmark(nsteps, npaths, heston, contract, nestimates)
-
-        mc_re = abs.((mc_estimates .- heston_price)) / heston_price
-        doi_re = abs.((doi_estimates .- heston_price)) / heston_price
-
-        mc_re_mean[j] = mean(mc_re)
-        mc_re_std[j] = std(mc_re)
-        doi_re_mean[j] = mean(doi_re)
-        doi_re_std[j] = std(doi_re)
-    end
-    
-    (mc_re_mean, mc_re_std), (doi_re_mean, doi_re_std)
-end
 
 # contract
 T = 1.
