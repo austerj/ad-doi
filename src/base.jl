@@ -20,10 +20,10 @@ include("blackscholes/powercall.jl")
 include("blackscholes/powerbinaryput.jl")
 include("blackscholes/smoothedpowerbinaryput.jl")
 
-include("heston/heston.jl")
+include("heston/model.jl")
 include("heston/diffop.jl")
 include("heston/estimator.jl")
 
-include("multivariate_heston/multivariate_heston.jl")
+include("multivariate_heston/model.jl")
 include("multivariate_heston/diffop.jl")
 include("multivariate_heston/estimator.jl")
