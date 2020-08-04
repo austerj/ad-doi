@@ -1,7 +1,8 @@
 using RandomNumbers.Xorshifts
 using Parameters
 using MuladdMacro
-using ForwardDiff: Dual
+using LinearAlgebra
+using ForwardDiff: Dual, hessian
 
 using RandomNumbers: AbstractRNG
 abstract type AbstractModel end
@@ -19,6 +20,10 @@ include("blackscholes/powercall.jl")
 include("blackscholes/powerbinaryput.jl")
 include("blackscholes/smoothedpowerbinaryput.jl")
 
-include("heston.jl")
-include("diffop.jl")
-include("estimator.jl")
+include("heston/heston.jl")
+include("heston/diffop.jl")
+include("heston/estimator.jl")
+
+include("multivariate_heston/multivariate_heston.jl")
+include("multivariate_heston/diffop.jl")
+include("multivariate_heston/estimator.jl")

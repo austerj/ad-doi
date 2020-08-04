@@ -34,4 +34,5 @@ atol = 1e-6
     @testset "Sensitivities" begin include("sensitivities_test.jl") end
     @testset "Estimator" begin include("estimator_test.jl") end
     @testset "Parallel Estimator" begin include("parallel_test.jl") end
+    @testset "Multidimensional Heston" begin include("multi_test.jl") end
 end
