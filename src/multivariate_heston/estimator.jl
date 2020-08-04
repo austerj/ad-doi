@@ -38,7 +38,7 @@ function parallel_estimator(nsteps, npaths, model::MultivariateHeston, contract:
 
     Δ = T/nsteps
     t = Δ:Δ:T
-    u₀ = u(0., s₀, ν₀, model, contract)
+    u₀ = u(0., [s₀; ν₀], model, contract)
     A₀ = Δ*diffop(0., s₀, ν₀, model, contract)/2
 
     nthreads = Threads.nthreads()
@@ -75,7 +75,7 @@ function sample(t, Δ, nsteps, model::MultivariateHeston, contract::AbstractCont
 
     s, ν = s₀, ν₀
     A = 0
-    @inbounds for i = 1:nsteps
+    for i = 1:nsteps
         s, ν = step(s, ν, Δ, model, rng)
         A += diffop(t[i], s, ν, model, contract)
     end

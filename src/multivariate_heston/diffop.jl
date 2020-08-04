@@ -7,19 +7,19 @@
     Dξ = Diagonal(ξ)
 
     d = length(s)
-    ρsν = ρ[d+1:end, 1:d]
-    ρνν = ρ[d+1:end, d+1:end]
+    ρsν = @view ρ[d+1:end, 1:d]
+    ρνν = @view ρ[d+1:end, d+1:end]
 
     transpose(.√ν) * (Ds*(ρsν.*Hsν) + 0.5*Dξ*(ρνν.*Hνν)) * Dξ*.√ν
 end
 
 function sensitivities(t, s, ν, model::MultivariateHeston, contract::AbstractContract)
-    X = [s; ν]
-    H = hessian(x -> u(t, x, model, contract), X)
+    @unpack ndims = model
 
-    d = length(s)
-    Hsν = H[d+1:end, 1:d]  # vanna
-    Hνν = H[d+1:end, d+1:end]  # vomma
+    H = hessian(x -> u(t, x, model, contract), [s; ν])
+
+    Hsν = H[ndims+1:end, 1:ndims]  # vanna
+    Hνν = H[ndims+1:end, ndims+1:end]  # vomma
 
     Hsν, Hνν
 end

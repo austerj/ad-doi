@@ -7,31 +7,36 @@
     ξ::Vector{Float64}
 
     # ρ is the correlation matrix of the form
-    #    W1 W2 ... Z1 Z2
+    #    W1 W2 . . . Zd
     # W1 1 
     # W2    1
-    # .       .
-    # .         .
-    # .           .
-    # Z1           1
-    # Z2              1
-    ρ::Array{Float64, 2}
-    cholesky::Array{Float64, 2}
+    # .        .
+    # .          .
+    # .            .
+    # Zd             1
+    ρ::Symmetric
+    cholesky::LowerTriangular
 
     ndims::Integer
 
     function MultivariateHeston(s₀, ν₀, r, κ, θ, ξ, ρ)
-        any(2*κ.*θ <= ξ.^2) ? error("Feller condition not satisfied") : new(s₀, ν₀, r, κ, θ, ξ, ρ, cholesky(ρ).L, length(s₀))
+        ndims = length(s₀)
+        if any([length(x) != ndims for x in [s₀, ν₀, κ, θ, ξ]]) || size(ρ) != (2*ndims, 2*ndims)
+            error("Dimension mismatch")
+        elseif any(2*κ.*θ <= ξ.^2)
+            error("Feller condition not satisfied")
+        else
+            new(s₀, ν₀, r, κ, θ, ξ, Symmetric(ρ, :U), cholesky(ρ).L, ndims)
+        end
     end
 end
 
 @muladd function step(s, ν, Δ, model::MultivariateHeston, rng::AbstractRNG)
-    @unpack r, κ, θ, ξ, cholesky = model
-    ndim = length(s)
+    @unpack r, κ, θ, ξ, cholesky, ndims = model
 
-    ΔB = cholesky * √Δ*randn(rng, 2*ndim)
-    ΔW = @view ΔB[1:ndim]
-    ΔZ = @view ΔB[ndim+1:end]
+    ΔB = cholesky * √Δ*randn(rng, 2*ndims)
+    ΔW = @view ΔB[1:ndims]
+    ΔZ = @view ΔB[ndims+1:end]
 
     # Euler-Maruyama predictors
     s̃ = @. s*(1 + Δ*r + √ν*ΔW)

@@ -75,7 +75,7 @@ function sample(t, Δ, nsteps, model::Heston, contract::AbstractContract, rng::A
 
     s, ν = s₀, ν₀
     A = 0
-    @inbounds for i = 1:nsteps
+    for i = 1:nsteps
         s, ν = step(s, ν, Δ, model, rng)
         A += diffop(t[i], s, ν, model, contract)
     end
