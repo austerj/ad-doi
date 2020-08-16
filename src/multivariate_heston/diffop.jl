@@ -24,7 +24,7 @@
              sum_k += term_sν*cholesky[k+i,j] + term_νν*cholesky[k+i,k+j]
         end
 
-        ddiffop += factor * sum_k
+        ddiffop += factor*sum_k
     end
 
     ddiffop

@@ -4,7 +4,7 @@ function estimator(nsteps, npaths, model::MultivariateHeston, contract::Abstract
 
     Δ = T/nsteps
     t = Δ:Δ:T
-    u₀ = u(0., [s₀; ν₀], model, contract)
+    u₀ = u(0., [s₀; ν₀], model, contract)::Float64
     A₀ = diffop(0., s₀, ν₀, model, contract)/2
 
     payoffs = Vector{Float64}(undef, npaths)
@@ -38,7 +38,7 @@ function parallel_estimator(nsteps, npaths, model::MultivariateHeston, contract:
 
     Δ = T/nsteps
     t = Δ:Δ:T
-    u₀ = u(0., [s₀; ν₀], model, contract)
+    u₀ = u(0., [s₀; ν₀], model, contract)::Float64
     A₀ = Δ*diffop(0., s₀, ν₀, model, contract)/2
 
     nthreads = Threads.nthreads()

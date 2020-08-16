@@ -14,7 +14,7 @@
     # .          .
     # .            .
     # Zd             1
-    ρ::Symmetric
+    ρ::Array{Float64,2}
     cholesky::LowerTriangular
 
     ndims::Integer
@@ -31,7 +31,7 @@
     end
 end
 
-@muladd function step(s, ν, Δ, model::MultivariateHeston, rng::AbstractRNG)
+@muladd function step(s, ν, Δ, model::MultivariateHeston, rng::AbstractRNG)::Tuple{Vector{Float64},Vector{Float64}}
     @unpack r, κ, θ, ξ, cholesky, ndims = model
 
     ΔB = cholesky * √Δ*randn(rng, 2*ndims)
@@ -44,23 +44,24 @@ end
 
     # Drift-implicit correctors
     s += @. Δ/2*r*(s̃+s) + s*√ν*ΔW
-    ν = @. max(ν + Δ*κ*(θ-(ν̃+ν)/2) + ξ*√ν*ΔZ, 1e-14)
+    ν = @. max(ν + Δ*κ*(θ-(ν̃+ν)/2) + ξ*√ν*ΔZ, 1e-8)
 
     s, ν
 end
 
 @muladd function u(t, x, model::MultivariateHeston, contract::AbstractContract)
-    @unpack r, κ, θ, ξ, ρ = model
+    @unpack r, κ, θ, ξ, ρ, ndims = model
     @unpack T = contract
     τ = T-t
     
-    s = x[1]
-    ν = x[2]
+    s = x[1:ndims]
 
     if τ > 0
+        ν = x[ndims+1:2*ndims]
+
         # analytical solution to √(1/τ*∫ν̄ₜdt) from 0 to τ
         σ̄ = @. √((θ + (ν-θ)/κ*(1-exp(-κ*τ))/τ))
-        u(t, s, σ̄, r, BlackScholes(), contract)
+        u(t, s, σ̄, r, ρ[1:ndims, 1:ndims], BlackScholes(), contract)
     else
         h(s, contract)
     end

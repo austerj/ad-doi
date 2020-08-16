@@ -19,6 +19,7 @@ include("blackscholes/strangle.jl")
 include("blackscholes/powercall.jl")
 include("blackscholes/powerbinaryput.jl")
 include("blackscholes/smoothedpowerbinaryput.jl")
+include("blackscholes/exchange.jl")
 
 include("heston/model.jl")
 include("heston/diffop.jl")
