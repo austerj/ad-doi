@@ -24,7 +24,7 @@ end
 
     # Drift-implicit correctors
     s += Δ/2*r*(s̃+s) + s*√ν*ΔW
-    ν = max(ν + Δ*κ*(θ-(ν̃+ν)/2) + ξ*√ν*ΔZ, 1e-14)
+    ν = max(ν + Δ*κ*(θ-(ν̃+ν)/2) + ξ*√ν*ΔZ, 1e-8)
 
     s, ν
 end
