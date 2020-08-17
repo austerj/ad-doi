@@ -7,7 +7,7 @@ struct _EuropeanPut <: AbstractContract
     K::Float64
 end
 
-@muladd function u(t, s, σ, r, model::BlackScholes, contract::_EuropeanPut)
+@muladd function u(t, s, σ, r, ρ, model::BlackScholes, contract::_EuropeanPut)
     @unpack T, K = contract
     τ = T-t
 
@@ -33,3 +33,13 @@ err_tol = 1e-3
 
 # mean relative error ~1e-5 with nsteps=50, npaths=5000 based on 1000 samples for call
 @test estimator(nsteps, npaths, _heston, _EuropeanPut(T,K), rng)[2] ≈ NUMERICALINTEGRATION_PUT atol=err_tol*NUMERICALINTEGRATION_PUT
+
+# test that single/multi-threaded DOI estimates are identically distributed
+using HypothesisTests: ApproximateTwoSampleKSTest, pvalue
+
+# run estimators
+standard = [estimator(nsteps, npaths_run, heston, EuropeanPut(T,K), rng)[2] for i = 1:nruns]
+multi = [estimator(nsteps, npaths_run, _heston, _EuropeanPut(T,K), rng)[2] for i = 1:nruns]
+
+# use two-sample Kolmogorov-Smirnov test
+@test pvalue(ApproximateTwoSampleKSTest(standard, multi)) > significance

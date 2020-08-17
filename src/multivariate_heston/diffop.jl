@@ -3,13 +3,12 @@
 
     Hsν, Hνν = sensitivities(t, s, ν, model, contract)
 
-    # matrix implementation - significantly slower than direct sum
+    # matrix implementation - unoptimized, significantly slower than direct sum
     # Ds = Diagonal(s)
     # Dξ = Diagonal(ξ)
 
-    # d = length(s)
-    # ρsν = @view ρ[d+1:end, 1:d]
-    # ρνν = @view ρ[d+1:end, d+1:end]
+    # ρsν = @view ρ[ndims+1:end, 1:ndims]
+    # ρνν = @view ρ[ndims+1:end, ndims+1:end]
 
     # transpose(.√ν) * (Ds*(ρsν.*Hsν) + 0.5*Dξ*(ρνν.*Hνν)) * Dξ*.√ν
 
