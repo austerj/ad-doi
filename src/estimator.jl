@@ -91,3 +91,51 @@ function sample(t, Δ, nsteps, model::Heston, contract::AbstractContract, initia
 
     payoff, A
 end
+
+# mc-only estimator
+function mc_parallel_estimator(nsteps, npaths, model::Heston, contract::AbstractContract)
+    @unpack s₀, ν₀, r = model
+    @unpack T = contract
+
+    Δ = T/nsteps
+    t = Δ:Δ:T
+    initial_state = state(model, contract)
+
+    nthreads = Threads.nthreads()
+    npath_atomic = Threads.Atomic{Int}(0)
+    payoff_atomic = Threads.Atomic{Float64}(0)
+
+    # estimates pass two-sample Kolmogorov-Smirnov test despite no randjump
+    rngs = [Xoroshiro128Plus(rand(UInt128)) for i = 1:nthreads]
+
+    Threads.@threads for i in 1:Threads.nthreads()
+        while true
+            npath_thread = Threads.atomic_add!(npath_atomic, 1)
+
+            if npath_thread < npaths
+                payoff = mc_sample(t, Δ, nsteps, model, contract, initial_state, rngs[Threads.threadid()])
+                Threads.atomic_add!(payoff_atomic, payoff) 
+            else
+                break
+            end
+        end
+    end
+
+    discount = exp(-r*T)
+    mc_estimate = discount * payoff_atomic[]/npaths
+
+    mc_estimate
+end
+
+function mc_sample(t, Δ, nsteps, model::Heston, contract::AbstractContract, initial_state::AbstractState, rng::AbstractRNG)
+    @unpack s₀, ν₀, r, κ, θ, ξ, ρ = model
+
+    s, ν = s₀, ν₀
+    path_state = deepcopy(initial_state)
+    @inbounds for i = 1:nsteps
+        s, ν = step(s, ν, Δ, model, rng)
+        state!(t, s, ν, contract, path_state)
+    end
+
+    h(s, contract, path_state)
+end
