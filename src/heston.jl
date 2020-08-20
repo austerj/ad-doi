@@ -52,7 +52,7 @@ function path(T, nsteps, npaths, model::Heston, rng::AbstractRNG)
     s, ν
 end
 
-@muladd function u(t, s, ν, model::Heston, contract::AbstractContract)
+@muladd function u(t, s, ν, model::Heston, contract::AbstractContract, state::AbstractState)
     @unpack r, κ, θ, ξ, ρ = model
     @unpack T = contract
     τ = T-t
@@ -60,8 +60,13 @@ end
     if τ > 0
         # analytical solution to √(1/τ*∫ν̄ₜdt) from 0 to τ
         σ̄ = √((θ + (ν-θ)/κ*(1-exp(-κ*τ))/τ))
-        u(t, s, σ̄, r, BlackScholes(), contract)
+        u(t, s, σ̄, r, BlackScholes(), contract, state)
     else
-        h(s, contract)
+        h(s, contract, state)
     end
+end
+
+# auto default state
+function u(t, s, ν, model::Heston, contract::AbstractContract)
+    u(t, s, ν, model::Heston, contract::AbstractContract, DefaultState())
 end

@@ -6,12 +6,13 @@ using ForwardDiff: Dual
 using RandomNumbers: AbstractRNG
 abstract type AbstractModel end
 abstract type AbstractContract end
+abstract type AbstractState end
 
 using Distributions: cdf, pdf, Normal, std
 Φ(x) = cdf(Normal(), x)
 φ(x) = pdf(Normal(), x)
 
-struct BlackScholes <: AbstractModel end
+include("blackscholes/model.jl")
 include("blackscholes/put.jl")
 include("blackscholes/call.jl")
 include("blackscholes/strangle.jl")
