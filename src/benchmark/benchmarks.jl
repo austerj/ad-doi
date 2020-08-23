@@ -53,3 +53,48 @@ function mc_benchmark(nsteps, npaths_set, heston, contract, nestimates, heston_p
     
     (mc_re_mean, mc_re_std), (doi_re_mean, doi_re_std)
 end
+
+# mc-only
+function only_mc_npaths_benchmark(nsteps, npaths, heston, contract, nestimates)
+    mc_estimates = Vector{Float64}(undef, nestimates)
+
+    for j = 1:nestimates
+        mc = mc_parallel_estimator(nsteps, npaths, heston, contract)
+        mc_estimates[j] = mc
+    end
+
+    mc_estimates
+end
+
+function only_mc_benchmark(nsteps_set, npaths_set, heston, contract, nestimates)
+    mc_ests = Array{Float64,3}(undef, length(nsteps_set), length(npaths_set), nestimates)
+    mc_mean = Array{Float64,2}(undef, length(nsteps_set), length(npaths_set))
+    mc_std = Array{Float64,2}(undef, length(nsteps_set), length(npaths_set))
+
+    for (j, npaths) in enumerate(npaths_set)
+        for (i, nsteps) in enumerate(nsteps_set)
+            npaths = npaths_set[j]
+            mc_estimates = only_mc_npaths_benchmark(nsteps, npaths, heston, contract, nestimates)
+
+            mc_ests[i,j,:] = mc_estimates
+            mc_mean[i,j] = mean(mc_estimates)
+            mc_std[i,j] = std(mc_estimates)
+        end
+    end
+    
+    (mc_mean, mc_std, mc_ests)
+end
+
+function log10ols(x,y)
+    intercept = 2*ones(length(x))
+    X = log10.([intercept x])
+    b = X\log10.(y)
+    10 .^ (X*b)
+end
+
+function log10linols(x,y)
+    intercept = 2*ones(length(x))
+    X = [intercept x]
+    b = X\log10.(y)
+    10 .^ (X*b)
+end

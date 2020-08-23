@@ -8,7 +8,7 @@ using LaTeXStrings
 pyplot()
 
 rng = Xoroshiro128Plus(1)
-nsteps = 400
+nsteps = 200
 npaths = 1
 
 T = 5.
@@ -17,12 +17,13 @@ s, ν = path(T, nsteps, npaths, heston, rng)
 
 theme(
     :default,
-    size=(800, 250),
+    size=(800, 300),
     xminorticks=4,
     yminorticks=3,
     xgrid=false,
     ygrid=false,
-    legend=false
+    legend=false,
+    linewidth=1.5
 )
 colors = [ColorSchemes.ice[i] for i in 64:128:192]
 stops = [Int(ceil(nsteps/k)) for k in [7, 3, 2]]
