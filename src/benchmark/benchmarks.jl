@@ -98,3 +98,17 @@ function log10linols(x,y)
     b = X\log10.(y)
     10 .^ (X*b)
 end
+
+function invsqrtols(x,y)
+    intercept = ones(length(x))
+    X = [intercept 1 ./ .√x]
+    b = X\y
+    X*b
+end
+
+function log2linols(x,y)
+    intercept = 2*ones(length(x))
+    X = log2.([intercept x])
+    b = X\log2.(y)
+    2 .^ (X*b)
+end

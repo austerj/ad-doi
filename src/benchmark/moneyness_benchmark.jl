@@ -44,7 +44,7 @@ colors = [ColorSchemes.ice[i] for i in 64:64:192]
 mc_fit = log10linols(Ks, mc_re[1,:])
 doi_fit = log10linols(log10.(Ks), doi_re[1,:])
 
-plot( Ks, mc_fit, yaxis=:log10, alpha=.8, label="monte carlo", color=colors[1])
+plot(Ks, mc_fit, yaxis=:log10, alpha=.8, label="monte carlo", color=colors[1])
 plot!(Ks, mc_re[1,:], yaxis=:log10, alpha=.8, label="", seriestype=:scatter, color=colors[1])
 plot!(Ks, doi_fit, yaxis=:log10, alpha=.8, label="doi", color=colors[2])
 plot!(Ks, doi_re[1,:], yaxis=:log10, alpha=.8, label="", seriestype=:scatter, color=colors[2])

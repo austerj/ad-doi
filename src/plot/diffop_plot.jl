@@ -7,11 +7,11 @@ using LaTeXStrings
 import PyPlot
 pyplot()
 
-t = 0.2
-T = 0.5
+t = 0.7
+T = 1
 K = 100
-K₁ = 95
-K₂ = 110
+K1 = 95
+K2 = 110
 n = 2
     
 function remove_grid!()
@@ -32,7 +32,6 @@ function diffop_plot(t, x, y, contract::AbstractContract, path_state::AbstractSt
     ylabel!(L"\nu_t")
     # savefig("DiffusionOperator"*string(typeof(contract))*".pdf")
 end
-savefig("DiffusionOperatorFloatingLookbackPut.pdf")
 nsteps = 51
 
 x = range(80, stop=120, length=nsteps)
@@ -42,12 +41,11 @@ theme(
     :default,
     colorbar=false,
     size=(800, 400),
-    # color=:oslo,
     color=:ice,
 )
 
 d1 = diffop_plot(t, x, y, EuropeanPut(T,K), DefaultState())
-d2 = diffop_plot(t, x, y, Strangle(T,K₁,K₂), DefaultState())
+d2 = diffop_plot(t, x, y, Strangle(T,K1,K2), DefaultState())
 d3 = diffop_plot(t, x, y, PowerBinaryPut(T,K,n), DefaultState())
 d4 = diffop_plot(t, x, y, PowerCall(T,K^n,n), DefaultState())
 d5 = diffop_plot(t, x, y, FloatingLookbackPut(T), RunningMax(120))
