@@ -39,7 +39,7 @@ theme(
     markersize=5,
     linewidth=1.5
 )
-colors = [ColorSchemes.ice[i] for i in 64:64:192]
+colors = [ColorSchemes.ice[i] for i in 64:128:192]
 
 mc_fit = log10linols(Ks, mc_re[1,:])
 doi_fit = log10linols(log10.(Ks), doi_re[1,:])
