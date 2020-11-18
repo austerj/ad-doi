@@ -2,6 +2,7 @@ using RandomNumbers.Xorshifts
 using Parameters
 using MuladdMacro
 using ForwardDiff: Dual
+using BenchmarkTools
 
 using RandomNumbers: AbstractRNG
 abstract type AbstractModel end

@@ -38,6 +38,6 @@ for j = 1:npaths
     plot!(t[stop:end], ν[stop:end, j], color=colors[2], label="", alpha=0.5)
     plot!(t[stop:end], σ̄, linestyle=:dash, color=colors[1], label=L"\bar\nu", alpha=alpha)
 end
-plot!(xticks=false)
+plot!(xlabel=L"t")
 
 savefig("VarianceProcessApproximation.pdf")
