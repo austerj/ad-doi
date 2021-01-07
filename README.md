@@ -1,2 +1,4 @@
 # ad-doi
-Automatic Differentiation in Julia with applications to variance-reduced Monte Carlo estimation in the Diffusion Operator Integral method
+Automatic differentiation in Julia with applications to variance reduced price estimation in the diffusion operator integral method.
+
+Paper available on [SSRN](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3733041).
