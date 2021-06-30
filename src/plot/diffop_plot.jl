@@ -10,10 +10,9 @@ pyplot()
 t = 0.7
 T = 1
 K = 100
-K1 = 95
-K2 = 110
-n = 2
-    
+H = 90
+barrier_nsteps = 200
+
 function remove_grid!()
     ax = Plots.PyPlot.gca()
     ax.xaxis.pane.fill = false
@@ -34,7 +33,6 @@ function diffop_plot(t, x, y, contract::AbstractContract, path_state::AbstractSt
 end
 nsteps = 51
 
-x = range(80, stop=120, length=nsteps)
 y = range(0.001, stop=0.025, length=nsteps)
 
 theme(
@@ -44,8 +42,11 @@ theme(
     color=:ice,
 )
 
-d1 = diffop_plot(t, x, y, EuropeanPut(T,K), DefaultState())
-d2 = diffop_plot(t, x, y, Strangle(T,K1,K2), DefaultState())
-d3 = diffop_plot(t, x, y, PowerBinaryPut(T,K,n), DefaultState())
-d4 = diffop_plot(t, x, y, PowerCall(T,K^n,n), DefaultState())
-d5 = diffop_plot(t, x, y, FloatingLookbackPut(T), RunningMax(120))
+put_x = range(80, stop=120, length=nsteps)
+diffop_plot(t, x, y, EuropeanPut(T,K), DefaultState())
+
+barrier_x = range(90, stop=120, length=nsteps)
+diffop_plot(t, barrier_x, y, DownOutBarrierCall(T,K,H,barrier_nsteps), BarrierBreach(false))
+
+lookback_x = range(100, stop=120, length=nsteps)
+diffop_plot(t, lookback_x, y, FloatingLookbackPut(T), RunningMax(120))
