@@ -1,4 +1,4 @@
-using SpecialFunctions
+using SpecialFunctions: zeta
 
 struct DownOutBarrierCall <: AbstractContract
     T::Float64
@@ -24,7 +24,7 @@ end
     @unpack T, K, H, nsteps = contract
     @unpack barrier_breached = state
 
-    if barrier_breached || s <= contract.H
+    if barrier_breached || s < contract.H
         return zero(s)
     end
 
