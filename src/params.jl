@@ -1,4 +1,4 @@
-# parameter set H
+# parameter set A
 s₀ = 100
 ν₀ = 0.16
 r = 0.04
