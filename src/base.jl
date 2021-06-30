@@ -21,6 +21,7 @@ include("blackscholes/powercall.jl")
 include("blackscholes/powerbinaryput.jl")
 include("blackscholes/smoothedpowerbinaryput.jl")
 include("blackscholes/lookback.jl")
+include("blackscholes/downout_barrier_call.jl")
 
 include("heston.jl")
 include("diffop.jl")
