@@ -80,12 +80,11 @@ theme(
     xminorticks=2
 )
 
-nbins = 150
-thresh = 2
+nbins = 100
+thresh = .75
 alpha = 0.8
 
 range_start = max(min(mean(dt), mean(at)) - thresh*max(std(dt), std(at)), 0)
-range_start = 0
 range_stop = max(mean(dt), mean(at)) + thresh*max(std(dt), std(at))
 timerange = range(range_start, stop=range_stop, length=nbins)
 
