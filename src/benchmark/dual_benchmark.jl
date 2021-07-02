@@ -11,16 +11,17 @@ T = 1.
 K = 100.
 contract = EuropeanCall(T,K);
 
-@noinline function dualsensitivities(s, ν, model::Heston, contract::AbstractContract)
+@noinline function dual_sensitivities(t, s, ν, model::Heston, contract::AbstractContract)
     # add small pertubations to prevent caching
     s += randn()*1e-5
     ν += randn()*1e-5
 
+    # create dual numbers
     zs = Dual(Dual(s,1.,0.), Dual(0.,0.,0.))
     zν = Dual(Dual(ν,0.,1.), Dual(1.,0.,0.))
 
     # σ̄ computed inside u
-    uz = u(0., zs, zν, model, contract)
+    uz = u(t, zs, zν, model, contract)
 
     ∂s = uz.value.partials[1]  # delta
     ∂ν = uz.value.partials[2]  # vega
@@ -31,7 +32,7 @@ contract = EuropeanCall(T,K);
     ∂s, ∂ν, ∂sν, ∂νν
 end
 
-@noinline @muladd function analyticalsensitivities(s, ν, model::Heston, contract::AbstractContract)
+@noinline @muladd function analytical_sensitivities(t, s, ν, model::Heston, contract::EuropeanCall)
     @unpack r, κ, θ = model
     @unpack T, K = contract
 
@@ -40,22 +41,18 @@ end
     ν += randn()*1e-5
 
     # σ̄ and derivatives wrt ν
-    σ̄ = √((θ + (ν-θ)/κ*(1-exp(-κ*T))/T))
-    σ̄∂ν = 0.5*(1-exp(-κ*T))/√(κ*T*(κ*θ+(ν-θ)*(1-exp(-κ*T))))
-    σ̄∂νν = -0.25*(1-exp(-(κ*T)))^2 / (√(κ*T)*(κ*θ+(ν-θ)*(1-exp(-κ*T)))^(3/2))
+    τ = T-t
+    σ̄ = √(θ + (ν-θ)/κ*(1-exp(-κ*τ))/τ)
+    σ̄∂ν = 0.5/σ̄*(1-exp(-κ*τ))/(κ*τ)
+    σ̄∂νν = -σ̄∂ν^2/σ̄
 
-    d1 = (log(s/K) + (r+0.5*σ̄^2)*T) / (√T*σ̄)
-    d2 = d1 - σ̄*√T
-
-    # Black-Scholes sensitivities
-    BS_∂ν = exp(r*T)*s*φ(d1)*√T  # vega
-    BS_∂sν = -exp(r*T)*φ(d1)*(d2/σ̄)  # vanna
-    BS_∂νν = exp(r*T)*s*φ(d1)*√T*(d1*d2)/σ̄  # vomma
-
-    ∂s = exp(r*T)*Φ(d1)  # delta
-    ∂ν = BS_∂ν*σ̄∂ν  # vega
-    ∂sν = BS_∂sν*σ̄∂ν  # vanna
-    ∂νν = BS_∂νν*σ̄∂ν^2 + BS_∂ν*σ̄∂νν  # vomma
+    # sensitivities
+    d1 = (log(s/K) + (r+0.5*σ̄^2)*τ) / (√τ*σ̄)
+    d2 = d1 - σ̄*√τ
+    ∂s = exp(r*τ)*Φ(d1)  # delta
+    ∂ν = exp(r*τ)*s*φ(d1)*√τ*σ̄∂ν  # vega
+    ∂νν = exp(r*τ)*s*φ(d1)*(d1*d2-1)/σ̄^3*(1-exp(-κ*τ))^2/(4*κ^2*τ^(3/2))  # vomma
+    ∂sν = -exp(r*τ)*φ(d1)*d2/σ̄^2*(1-exp(-κ*τ))/(2*κ*τ)  # vanna
 
     # force return to prevent compiler from skipping computations
     ∂s, ∂ν, ∂sν, ∂νν
@@ -65,11 +62,15 @@ nsamples = 10000
 nevals = 1000
 nseconds = 120
 
-dualbenchmark = @benchmark dualsensitivities($s₀, $ν₀, $heston, $contract) samples=nsamples seconds=nseconds evals=nevals
-analyticalbenchmark = @benchmark analyticalsensitivities($s₀, $ν₀, $heston, $contract) samples=nsamples seconds=nseconds evals=nevals
+T = 1
+K = 100.
+contract = EuropeanCall(T,K);
 
-dt = dualbenchmark.times
-at = analyticalbenchmark.times
+dual_benchmark = @benchmark dual_sensitivities(0., $s₀, $ν₀, $heston, $contract) samples=nsamples seconds=nseconds evals=nevals
+analytical_benchmark = @benchmark analytical_sensitivities(0., $s₀, $ν₀, $heston, $contract) samples=nsamples seconds=nseconds evals=nevals
+
+dt = dual_benchmark.times
+at = analytical_benchmark.times
 
 theme(
     :default,
@@ -79,11 +80,12 @@ theme(
     xminorticks=2
 )
 
-nbins = 100
-thresh = 0.5
+nbins = 150
+thresh = 2
 alpha = 0.8
 
 range_start = max(min(mean(dt), mean(at)) - thresh*max(std(dt), std(at)), 0)
+range_start = 0
 range_stop = max(mean(dt), mean(at)) + thresh*max(std(dt), std(at))
 timerange = range(range_start, stop=range_stop, length=nbins)
 
