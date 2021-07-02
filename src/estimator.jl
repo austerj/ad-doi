@@ -17,7 +17,7 @@ function estimator(nsteps, npaths, model::Heston, contract::AbstractContract, rn
         path_state = deepcopy(initial_state)
         for i = 1:nsteps
             s, ν = step(s, ν, Δ, model, rng)
-            state!(t, s, ν, contract, path_state)
+            state!(t[i], s, ν, contract, path_state)
             A += diffop(t[i], s, ν, model, contract, path_state)
         end
         # trapezoidal rule; diffop is zero at time T hence division not needed
@@ -82,7 +82,7 @@ function sample(t, Δ, nsteps, model::Heston, contract::AbstractContract, initia
     path_state = deepcopy(initial_state)
     @inbounds for i = 1:nsteps
         s, ν = step(s, ν, Δ, model, rng)
-        state!(t, s, ν, contract, path_state)
+        state!(t[i], s, ν, contract, path_state)
         A += diffop(t[i], s, ν, model, contract, path_state)
     end
     # trapezoidal rule; diffop is zero at time T hence division not needed
@@ -134,7 +134,7 @@ function mc_sample(t, Δ, nsteps, model::Heston, contract::AbstractContract, ini
     path_state = deepcopy(initial_state)
     @inbounds for i = 1:nsteps
         s, ν = step(s, ν, Δ, model, rng)
-        state!(t, s, ν, contract, path_state)
+        state!(t[i], s, ν, contract, path_state)
     end
 
     h(s, contract, path_state)
