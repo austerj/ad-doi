@@ -11,6 +11,20 @@ function npaths_benchmark(nsteps, npaths, heston, contract, nestimates)
     mc_estimates, doi_estimates
 end
 
+function confidence_benchmark(nsteps, npaths, heston, contract, nestimates)
+    mc, doi = mc_benchmark([nsteps], [npaths], heston, contract, nestimates)
+
+    mc_mean = mc[1]
+    mc_std = mc[2]
+    doi_mean = doi[1]
+    doi_std = doi[2]
+
+    mc_conf = (mc_mean-1.96*mc_std, mc_mean+1.96*mc_std)
+    doi_conf = (doi_mean-1.96*doi_std, doi_mean+1.96*doi_std)
+
+    mc[1], mc_conf, doi[1], doi_conf
+end
+
 function mc_benchmark(nsteps_set, npaths_set, heston, contract, nestimates)
     mc_mean = Array{Float64,2}(undef, length(nsteps_set), length(npaths_set))
     mc_std = Array{Float64,2}(undef, length(nsteps_set), length(npaths_set))
