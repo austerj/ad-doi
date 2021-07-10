@@ -24,7 +24,6 @@ end
     τ = T-t
 
     # bias correction for discretely-monitored price
-    β = -zeta(.5) / √(2*π)
     bias_exponent = β*σ*√(T/nsteps)
     
     # bias correct running max

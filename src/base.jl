@@ -3,6 +3,7 @@ using Parameters
 using MuladdMacro
 using ForwardDiff: Dual
 using BenchmarkTools
+using SpecialFunctions: zeta
 
 using RandomNumbers: AbstractRNG
 abstract type AbstractModel end
@@ -12,6 +13,9 @@ abstract type AbstractState end
 using Distributions: cdf, pdf, Normal, std
 Φ(x) = cdf(Normal(), x)
 φ(x) = pdf(Normal(), x)
+
+# bias correction factor
+const β = -zeta(.5) / √(2*π)
 
 include("blackscholes/model.jl")
 include("blackscholes/put.jl")

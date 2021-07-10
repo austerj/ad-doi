@@ -1,5 +1,3 @@
-using SpecialFunctions: zeta
-
 struct DownOutBarrierCall <: AbstractContract
     T::Float64
     K::Float64
@@ -29,7 +27,6 @@ end
     end
 
     # barrier bias correction for discretely-monitored price
-    β = -zeta(.5) / √(2*π)
     H = H * exp(-β*σ*√(T/nsteps))
 
     τ = T-t
